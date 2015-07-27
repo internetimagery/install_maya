@@ -85,12 +85,16 @@ def ExtractRPM(working):
     rpms = [os.path.join(working, f) for f in os.listdir(working) if reg.match(f)]
     if rpms:
         Title("Converting RPMS. THIS CAN TAKE A WHILE!!")
-        time.sleep(3)
+        time.sleep(5)
+        print "Here we go..."
+        time.sleep(2)
+        print "..."
+        time.sleep(2)
     tempf = os.path.join(working, "converted")
     if not os.path.isdir(tempf):
         os.mkdir(tempf)
-    subprocess.call(["export", "RPM_INSTALL_PREFIX=/usr"])
-    subprocess.call(["export", "LD_LIBRARY_PATH=/opt/Autodesk/Adlm/R5/lib64/"])
+    # subprocess.call(["export", "RPM_INSTALL_PREFIX=/usr"])
+    # subprocess.call(["export", "LD_LIBRARY_PATH=/opt/Autodesk/Adlm/R5/lib64/"])
     for rpm in rpms:
         subprocess.call(["sudo", "alien", "-c", "--veryverbose", rpm], cwd=tempf)
         os.remove(rpm)
@@ -98,8 +102,23 @@ def ExtractRPM(working):
     if debs:
         for deb in debs:
             os.rename(os.path.join(tempf, deb), os.path.join(working, deb))
+    os.removedirs(tempf)
 
     return working
+
+def SymLinking(version):
+    def link(pathfrom, pathto):
+        if not os.path.isfile(pathfrom):
+            os.symlink(pathfrom, pathto)
+    def latest(files):
+        reg = re.compile(".+?\.so\.([\d\.]+)")
+        for f in files:
+            print f
+            print reg.match(f)
+    if version == "2015":
+        base = "/usr/lib/x86_64-linux-gnu"
+        base_files = os.listdir(base)
+        print [f for f in base_files if "libssl" in f]
 
 HOME = os.path.expanduser("~")
 WORKING = os.path.join(HOME, "maya_temp_install")
@@ -108,8 +127,11 @@ VERSION = "2015"
 # Title("Step 1")
 # GetDependencies()
 #
-Title("Step 2")
-extracted = DownloadPackage(WORKING, VERSION)
+# Title("Step 2")
+# extracted = DownloadPackage(WORKING, VERSION)
+#
+# Title("Step 3")
+# extracted = ExtractRPM(extracted)
 
-Title("Step 3")
-extracted = ExtractRPM(extracted)
+Title("Step 4")
+SymLinking(VERSION)

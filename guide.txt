@@ -1,0 +1,124 @@
+First of all.
+install additional drivers or perticular drivers from your provider. nvidia and amd.
+restart your system.
+
+>> install necessery packages.
+sudo apt-get install package name
+alien
+tcsh
+fam
+libxp6
+libxpm4
+libxprintapputil1
+libxprintutil1
+cpio
+rpm
+ia32-libs
+libjpeg62
+libpng-dev
+
+if above packages can't  find, then install this.
+alien
+tcsh
+fam
+libxp
+libxpm
+libxprintapputil1
+libxprintutil1
+cpio
+rpm
+ia32-libs
+
+extra packages
+csh
+tcsh
+libglw1-mesa
+libglw1-mesa-dev
+mesa-utils
+libaudiofile-dev
+libaudiofile0
+libaudiofile0-dbg
+elfutils
+gamin - it disables fam package
+libxp6
+libxpm4
+libxt6
+libxmu6
+libxau6
+libxinerama1
+libxprintapputil1
+libxprintutil1
+xfs
+xfstt
+ttf-liberation
+ttf-mscorefonts-installer
+xfonts-100dpi
+xfonts-75dpi
+alien
+
+
+
+
+
+>>now copy your maya .tgz file to /root/mayaTempInstall with root.
+
+>> then use shell script to install maya in ubuntu (you can get script related to your maya verstion from https://gist.github.com/)
+
+sudo bash "script name"  (in perticular path)
+
+>> After installation finishes.
+
+Install License
+
+
+1.) cd /root/mayaTempInstall
+sh -c "echo 'int main (void) {return 0; }' >> /mayaTempInstall/mayaInstall.c"
+cd /root/mayaTempInstall
+gcc mayaInstall.c
+
+2.)sudo cp /usr/bin/rpm /usr/bin/rpm_backup
+    cd /mayaTempInstall
+    sudo cp a.out /usr/bin/rpm
+
+3.) cd /root/mayaTempInstall
+   sudo ./setup
+
+4.) enter Serial and Product Key
+
+5.)sudo cp /usr/bin/rpm_backup /usr/bin/rpm
+
+
+
+after that.
+create a symbolic link for maya2014
+
+
+sudo ln -s /usr/lib/x86_64-linux-gnu/libtiff.so.5 /usr/lib/libtiff.so.3
+
+if file exists at /usr/lib/libtiff.so.3
+
+delete that file and link it.
+
+now run maya command from terminal and it works
+
+
+if you need root permissions to start maya
+then install gksu
+
+sudo apt-get install gksu
+
+and then run gksu maya ....it works........!!!
+
+to solve jpeg issue with maya.
+
+ln -s /usr/lib/x86_64-linux-gnu/libtiff.so.4.3.6 /usr/lib/libtiff.so.3
+
+and add
+
+install libjpeg, libpng-dev
+
+"find this line in the file:
+setenv LIBQUICKTIME_PLUGIN_DIR "$MAYA_LOCATION/lib"
+
+and add the next line as a new line:
+setenv LD_PRELOAD /usr/lib/x86_64-linux-gnu/libjpeg.so.62
