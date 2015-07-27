@@ -110,18 +110,19 @@ def ExtractRPM(working):
 def SymLinking(version):
     def link(pathfrom, pathto):
         if not os.path.isfile(pathto):
-            os.symlink(pathfrom, pathto)
+            subprocess.call(["sudo", "ln", "-s", pathfrom, pathto])
     def latest(filename):
         files = sorted([f for f in base_files if filename in f])
         return os.path.join(base, files[0]) if files else None
     if version == "2015":
         base = "/usr/lib/x86_64-linux-gnu"
         base_files = os.listdir(base)
-        subprocess.call(["sudo", "ln", "-s", latest("libcrypto.so"), os.path.join(base, "libcrypto.so.10")])
-        subprocess.call(["sudo", "ln", "-s", latest("libssl.so"), os.path.join(base, "libssl.so.10")])
-
-    subprocess.call(["sudo", "mkdir", "/usr/tmp"])
-    subprocess.call(["sudo", "chmod", "777", "/usr/tmp"])
+        link(latest("libcrypto.so"), os.path.join(base, "libcrypto.so.10"))
+        link(latest("libssl.so"), os.path.join(base, "libssl.so.10"))
+    tempf = "/usr/tmp"
+    if not os.path.isdir(tempf):
+        subprocess.call(["sudo", "mkdir", tempf])
+        subprocess.call(["sudo", "chmod", "777", tempf])
 
 HOME = os.path.expanduser("~")
 WORKING = os.path.join(HOME, "maya_temp_install")
