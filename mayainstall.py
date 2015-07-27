@@ -4,6 +4,7 @@
 import subprocess
 import tempfile
 import urllib2
+import time
 import re
 import os
 
@@ -84,14 +85,21 @@ def ExtractRPM(working):
     rpms = [os.path.join(working, f) for f in os.listdir(working) if reg.match(f)]
     if rpms:
         Title("Converting RPMS. THIS CAN TAKE A WHILE!!")
-    tempf = os.path.join(working, "temp")
+        time.sleep(3)
+    tempf = os.path.join(working, "converted")
     if not os.path.isdir(tempf):
         os.mkdir(tempf)
-    for rpm in rpms[0:1]:
+    subprocess.call(["export", "RPM_INSTALL_PREFIX=/usr"])
+    subprocess.call(["export", "LD_LIBRARY_PATH=/opt/Autodesk/Adlm/R5/lib64/"])
+    for rpm in rpms:
         subprocess.call(["sudo", "alien", "-c", "--veryverbose", rpm], cwd=tempf)
+        os.remove(rpm)
+    debs = os.listdir(tempf)
+    if debs:
+        for deb in debs:
+            os.rename(os.path.join(tempf, deb), os.path.join(working, deb))
 
-
-        print rpm
+    return working
 
 HOME = os.path.expanduser("~")
 WORKING = os.path.join(HOME, "maya_temp_install")
@@ -104,4 +112,4 @@ Title("Step 2")
 extracted = DownloadPackage(WORKING, VERSION)
 
 Title("Step 3")
-ExtractRPM(extracted)
+extracted = ExtractRPM(extracted)
