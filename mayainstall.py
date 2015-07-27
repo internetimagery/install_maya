@@ -4,6 +4,7 @@
 import subprocess
 import tempfile
 import urllib2
+import re
 import os
 
 class Step(object):
@@ -76,12 +77,21 @@ def DownloadPackage(working, version):
         os.rename(tempf.name, download)
         subprocess.call(["tar", "-xf", download], cwd=extract)
 
+    return extract
+
+def ExtractRPM(working):
+    reg = re.compile("^.+?\.rpm$")
+    print [f for f in os.listdir(working) if reg.match(f)]
+
 HOME = os.path.expanduser("~")
 WORKING = os.path.join(HOME, "maya_temp_install")
 VERSION = "2015"
 
-Title("Step 1")
-GetDependencies()
-
+# Title("Step 1")
+# GetDependencies()
+#
 Title("Step 2")
-DownloadPackage(WORKING, VERSION)
+extracted = DownloadPackage(WORKING, VERSION)
+
+Title("Step 3")
+ExtractRPM(extracted)
