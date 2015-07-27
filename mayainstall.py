@@ -81,7 +81,17 @@ def DownloadPackage(working, version):
 
 def ExtractRPM(working):
     reg = re.compile("^.+?\.rpm$")
-    print [f for f in os.listdir(working) if reg.match(f)]
+    rpms = [os.path.join(working, f) for f in os.listdir(working) if reg.match(f)]
+    if rpms:
+        Title("Converting RPMS. THIS CAN TAKE A WHILE!!")
+    tempf = os.path.join(working, "temp")
+    if not os.path.isdir(tempf):
+        os.mkdir(tempf)
+    for rpm in rpms[0:1]:
+        subprocess.call(["sudo", "alien", "-c", "--veryverbose", rpm], cwd=tempf)
+
+
+        print rpm
 
 HOME = os.path.expanduser("~")
 WORKING = os.path.join(HOME, "maya_temp_install")
