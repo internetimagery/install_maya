@@ -44,6 +44,7 @@ def GetDependencies():
     subprocess.call(deps)
 
 def DownloadPackage(working, version):
+    extract = os.path.join(working, "extracted") # Save extracted files here
     if version == "2015":
         url = "http://download.autodesk.com/us/support/files/maya_2015_service_pack_6/Autodesk_Maya_2015_SP6_EN_Linux.tgz"
         download = os.path.join(working, "Maya2015.tgz")
@@ -51,10 +52,12 @@ def DownloadPackage(working, version):
     if not os.path.isdir(working):
         os.mkdir(working)
 
+    if not os.path.isdir(extract):
+        os.mkdir(extract)
+
     if not os.path.isfile(download):
         Title("Downloading Maya")
         tempf = tempfile.NamedTemporaryFile()
-        #print tempf.name
         u = urllib2.urlopen(url)
         meta = u.info()
         size = int(meta.getheaders("Content-Length")[0])
@@ -71,13 +74,14 @@ def DownloadPackage(working, version):
             status = status + chr(8) * (len(status)+1)
             print "Downloading Maya", status
         os.rename(tempf.name, download)
+        subprocess.call(["tar", "-xf", download], cwd=extract)
 
 HOME = os.path.expanduser("~")
 WORKING = os.path.join(HOME, "maya_temp_install")
 VERSION = "2015"
 
-# Title("Step 1")
-# GetDependencies()
+Title("Step 1")
+GetDependencies()
 
 Title("Step 2")
 DownloadPackage(WORKING, VERSION)
